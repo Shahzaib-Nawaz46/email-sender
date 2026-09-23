@@ -70,6 +70,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const historyContainer = document.getElementById('history-container');
   const clearHistoryBtn = document.getElementById('clear-history-btn');
 
+  // Additional Premium Controls
+  const resetFormBtn = document.getElementById('reset-form-btn');
+  const deviceBtnDesktop = document.getElementById('device-btn-desktop');
+  const deviceBtnMobile = document.getElementById('device-btn-mobile');
+  const emailPreviewFrame = document.getElementById('email-preview-frame');
+  const copyEmailTextBtn = document.getElementById('copy-email-text-btn');
+  const previewBackBtn = document.getElementById('preview-back-btn');
+  const previewSendMobileBtn = document.getElementById('preview-send-mobile-btn');
+
   // State
   let reviewLinks = [''];
   const STORAGE = {
@@ -352,24 +361,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // Mobile Quick Navigation & Smooth Scroll
+  // Mobile Tab Navigation (Clean View Switching, No Preview Underneath)
   // ============================================================
   function switchTab(targetTab) {
     tabButtons.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === targetTab);
     });
 
-    const targetSection = document.getElementById(`section-${targetTab}`);
-    if (targetSection) {
-      const headerOffset = 110;
-      const elementPosition = targetSection.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    tabPanes.forEach(pane => {
+      pane.classList.toggle('active', pane.id === `section-${targetTab}`);
+    });
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
-    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   tabButtons.forEach(btn => {
@@ -384,23 +387,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Auto-highlight mobile tabs on scroll
-  window.addEventListener('scroll', () => {
-    if (window.innerWidth > 900) return;
-    const scrollPos = window.pageYOffset + 140;
-
-    tabPanes.forEach(pane => {
-      const top = pane.offsetTop;
-      const height = pane.offsetHeight;
-      const tabName = pane.id.replace('section-', '');
-
-      if (scrollPos >= top && scrollPos < top + height) {
-        tabButtons.forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.tab === tabName);
-        });
-      }
+  if (previewBackBtn) {
+    previewBackBtn.addEventListener('click', () => {
+      switchTab('compose');
     });
-  }, { passive: true });
+  }
+
+  if (previewSendMobileBtn) {
+    previewSendMobileBtn.addEventListener('click', () => {
+      emailForm.requestSubmit();
+    });
+  }
 
   // ============================================================
   // Dynamic Review Links (Smart & Compact)
@@ -411,6 +408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     reviewLinks.forEach((linkValue, index) => {
       const card = document.createElement('div');
       card.className = 'link-row-card';
+      const cleanVal = (linkValue || '').trim();
 
       card.innerHTML = `
         <div class="link-tag-index">#${index + 1}</div>
@@ -426,6 +424,15 @@ document.addEventListener('DOMContentLoaded', () => {
             placeholder="https://www.google.com/maps/reviews/..." 
             value="${escapeHtml(linkValue)}"
           >
+          ${cleanVal ? `
+            <a href="${escapeHtml(cleanVal)}" target="_blank" rel="noopener noreferrer" class="test-link-btn" title="Open and test review link">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                <polyline points="15 3 21 3 21 9"></polyline>
+                <line x1="10" y1="14" x2="21" y2="3"></line>
+              </svg>
+            </a>
+          ` : ''}
         </div>
         <button 
           type="button" 
@@ -762,6 +769,71 @@ document.addEventListener('DOMContentLoaded', () => {
   if (clearDrawerHistoryBtn) {
     clearDrawerHistoryBtn.addEventListener('click', clearLogs);
   }
+
+  // ============================================================
+  // Additional Premium Features: Reset, Copy, Device Toggle, Shortcuts
+  // ============================================================
+  if (resetFormBtn) {
+    resetFormBtn.addEventListener('click', () => {
+      const hasContent = recipientEmailInput.value || teamNameInput.value || reviewLinks.some(l => l.trim().length > 0);
+      if (hasContent) {
+        recipientEmailInput.value = '';
+        teamNameInput.value = '';
+        reviewLinks = [''];
+        renderReviewLinks();
+        updateLivePreview();
+        recipientEmailInput.focus();
+        showToast('Form cleared for next business.', 'info');
+      } else {
+        recipientEmailInput.focus();
+      }
+    });
+  }
+
+  // Device simulation toggle (Desktop / Mobile Preview)
+  if (deviceBtnDesktop && deviceBtnMobile && emailPreviewFrame) {
+    deviceBtnDesktop.addEventListener('click', () => {
+      deviceBtnDesktop.classList.add('active');
+      deviceBtnMobile.classList.remove('active');
+      emailPreviewFrame.classList.remove('device-mobile');
+    });
+
+    deviceBtnMobile.addEventListener('click', () => {
+      deviceBtnMobile.classList.add('active');
+      deviceBtnDesktop.classList.remove('active');
+      emailPreviewFrame.classList.add('device-mobile');
+    });
+  }
+
+  // Copy plain text email
+  if (copyEmailTextBtn) {
+    copyEmailTextBtn.addEventListener('click', () => {
+      const subject = emailSubjectInput.value.trim() || 'Removal of negative reviews on your Google profile';
+      const teamName = teamNameInput.value.trim();
+      const greeting = teamName ? `Hello ${teamName},` : 'Hello,';
+      const sender = signoffNameInput.value.trim() || 'Reputation Support Team';
+      const validLinks = reviewLinks.filter(l => l && l.trim().length > 0);
+      const linksList = validLinks.map((l, i) => `${i + 1}. ${l.trim()}`).join('\n');
+
+      const plainText = `Subject: ${subject}\n\n${greeting}\n\nWe noticed some negative reviews on your Google profile. We can completely remove them for you — and you only pay AFTER successful removal (zero upfront payment).\n\nReview link(s):\n${linksList || '(No links specified)'}\n\nIf you'd like us to take care of this for you, simply reply to this email and let us know.\n\nBest regards,\n${sender}`;
+
+      navigator.clipboard.writeText(plainText).then(() => {
+        showToast('Email text copied to clipboard!', 'success');
+      }).catch(() => {
+        showToast('Could not copy to clipboard.', 'error');
+      });
+    });
+  }
+
+  // Global Keyboard Shortcut: Ctrl + Enter / Cmd + Enter to dispatch
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      if (!sendBtn.disabled) {
+        e.preventDefault();
+        emailForm.requestSubmit();
+      }
+    }
+  });
 
   // ============================================================
   // Initialize

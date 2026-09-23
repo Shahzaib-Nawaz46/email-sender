@@ -149,6 +149,7 @@
       </div>
       <div id="drawer-history-container" class="history-scroll-box">
         <p class="empty-history-text">No outreach emails sent yet in this session.</p>
+      </div>
     </div>
   </aside>
 
@@ -234,7 +235,7 @@
               <button type="submit" id="send-btn" class="btn-send-main">
                 <span class="btn-spinner hidden" id="send-spinner"></span>
                 <span id="send-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                   </svg>
@@ -242,12 +243,21 @@
                 <span id="send-btn-text">Send Email Now</span>
               </button>
 
-              <button type="button" id="preview-switch-btn" class="btn-preview-switch" title="Scroll to Live Preview">
+              <button type="button" id="preview-switch-btn" class="btn-preview-switch" title="Preview Recipient Email">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                   <circle cx="12" cy="12" r="3"></circle>
                 </svg>
-                <span>Live Preview &darr;</span>
+                <span>Preview &rarr;</span>
+              </button>
+
+              <button type="button" id="reset-form-btn" class="btn-icon-secondary" title="Clear fields for next business">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                  <path d="M21 3v5h-5"></path>
+                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                  <path d="M3 21v-5h5"></path>
+                </svg>
               </button>
             </div>
 
@@ -255,68 +265,112 @@
         </div>
       </section>
 
-      <!-- COLUMN 2: SLEEK LIVE PREVIEW (Fits naturally on screen) -->
+      <!-- COLUMN 2: SLEEK LIVE PREVIEW -->
       <section id="section-preview" class="tab-pane preview-col">
         <div class="panel-card preview-box">
           <div class="preview-mini-top">
-            <span class="preview-live-tag">
-              <span class="pulse-dot"></span> LIVE PREVIEW
-            </span>
-            <span class="preview-client-hint">Recipient View</span>
+            <div class="preview-tag-group">
+              <span class="preview-live-tag">
+                <span class="pulse-dot"></span> LIVE PREVIEW
+              </span>
+              <span class="preview-client-hint">Recipient View</span>
+            </div>
+
+            <!-- Viewport Device Switcher & Quick Copy (Desktop) -->
+            <div class="preview-toolbar">
+              <div class="device-switcher">
+                <button type="button" id="device-btn-desktop" class="device-toggle-btn active" title="Desktop Inbox View">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                  <span>Desktop</span>
+                </button>
+                <button type="button" id="device-btn-mobile" class="device-toggle-btn" title="Mobile Inbox View">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                    <line x1="12" y1="18" x2="12.01" y2="18"></line>
+                  </svg>
+                  <span>Mobile</span>
+                </button>
+              </div>
+
+              <button type="button" id="copy-email-text-btn" class="btn-preview-tool" title="Copy email plain text to clipboard">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                <span>Copy</span>
+              </button>
+            </div>
           </div>
 
-          <!-- Email Content Sheet -->
-          <div class="email-sheet">
-            <!-- Header Meta -->
-            <div class="sheet-meta">
-              <div class="sheet-avatar">R</div>
-              <div class="sheet-info">
-                <div class="sheet-info-line1">
-                  <span id="preview-sender-name" class="sheet-sender">Reputation Support Team</span>
-                  <span class="sheet-time">1:47 PM</span>
+          <!-- Email Content Sheet (Responsive or Simulated Frame) -->
+          <div id="email-preview-frame" class="email-sheet-frame">
+            <div class="email-sheet">
+              <!-- Header Meta -->
+              <div class="sheet-meta">
+                <div class="sheet-avatar">R</div>
+                <div class="sheet-info">
+                  <div class="sheet-info-line1">
+                    <span id="preview-sender-name" class="sheet-sender">Reputation Support Team</span>
+                    <span class="sheet-time">Just now</span>
+                  </div>
+                  <div class="sheet-info-line2">
+                    <span>to <strong id="preview-to-name">info</strong></span>
+                    <span class="sheet-arrow">&rsaquo;</span>
+                  </div>
                 </div>
-                <div class="sheet-info-line2">
-                  <span>to <strong id="preview-to-name">info</strong></span>
-                  <span class="sheet-arrow">&rsaquo;</span>
+              </div>
+
+              <!-- Subject -->
+              <div class="sheet-subject">
+                <h3 id="preview-subject-text" class="sheet-subject-title">
+                  Removal of negative reviews on your Google profile
+                </h3>
+              </div>
+
+              <hr class="sheet-divider">
+
+              <!-- Body Message -->
+              <div class="sheet-body">
+                <p id="preview-greeting" class="msg-greeting">
+                  Hello <strong id="preview-team-name">Holmes Mill Team</strong>,
+                </p>
+
+                <p class="msg-p">
+                  We noticed some negative reviews on your Google profile. We can completely remove them for you &mdash; and <strong>you only pay AFTER successful removal</strong> (zero upfront payment).
+                </p>
+
+                <p class="msg-links-head">Review link(s):</p>
+
+                <ol id="preview-links-list" class="msg-ol">
+                  <li><a href="https://www.google.com/maps/reviews/..." target="_blank" rel="noopener noreferrer">https://www.google.com/maps/reviews/...</a></li>
+                </ol>
+
+                <p class="msg-p">
+                  If you'd like us to take care of this for you, simply reply to this email and let us know.
+                </p>
+
+                <div class="msg-signoff">
+                  <p class="signoff-reg">Best regards,</p>
+                  <p id="preview-signoff-name" class="signoff-name">Reputation Support Team</p>
                 </div>
               </div>
             </div>
-
-            <!-- Subject -->
-            <div class="sheet-subject">
-              <h3 id="preview-subject-text" class="sheet-subject-title">
-                Removal of negative reviews on your Google profile
-              </h3>
-            </div>
-
-            <hr class="sheet-divider">
-
-            <!-- Body Message -->
-            <div class="sheet-body">
-              <p id="preview-greeting" class="msg-greeting">
-                Hello <strong id="preview-team-name">Holmes Mill Team</strong>,
-              </p>
-
-              <p class="msg-p">
-                We noticed some negative reviews on your Google profile. We can completely remove them for you &mdash; and <strong>you only pay AFTER successful removal</strong> (zero upfront payment).
-              </p>
-
-              <p class="msg-links-head">Review link(s):</p>
-
-              <ol id="preview-links-list" class="msg-ol">
-                <li><a href="https://www.google.com/maps/reviews/..." target="_blank" rel="noopener noreferrer">https://www.google.com/maps/reviews/...</a></li>
-              </ol>
-
-              <p class="msg-p">
-                If you'd like us to take care of this for you, simply reply to this email and let us know.
-              </p>
-
-              <div class="msg-signoff">
-                <p class="signoff-reg">Best regards,</p>
-                <p id="preview-signoff-name" class="signoff-name">Reputation Support Team</p>
-              </div>
-            </div>
           </div>
+
+          <!-- Mobile Only Bottom Action Bar in Preview Screen -->
+          <div class="preview-mobile-footer">
+            <button type="button" id="preview-back-btn" class="btn btn--outline">
+              &larr; Back to Edit
+            </button>
+            <button type="button" id="preview-send-mobile-btn" class="btn btn--blue">
+              Send Email Now &rarr;
+            </button>
+          </div>
+
         </div>
       </section>
 
