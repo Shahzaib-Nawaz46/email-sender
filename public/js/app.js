@@ -16,6 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const previewSwitchBtn = document.getElementById('preview-switch-btn');
   const previewTabCount = document.getElementById('preview-tab-count');
 
+  // Header & Drawer Tab Controls
+  const openLogsBtn = document.getElementById('open-logs-btn');
+  const tabBtnSettings = document.getElementById('tab-btn-settings');
+  const tabBtnLogs = document.getElementById('tab-btn-logs');
+  const drawerPaneSettings = document.getElementById('drawer-pane-settings');
+  const drawerPaneLogs = document.getElementById('drawer-pane-logs');
+  const drawerHistoryContainer = document.getElementById('drawer-history-container');
+  const clearDrawerHistoryBtn = document.getElementById('clear-drawer-history-btn');
+  const headerLogCount = document.getElementById('header-log-count');
+  const drawerLogCount = document.getElementById('drawer-log-count');
+
   // Header Status
   const headerSmtpDot = document.getElementById('header-smtp-dot');
   const headerSmtpText = document.getElementById('header-smtp-text');
@@ -113,9 +124,31 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ============================================================
-  // Side Drawer Management (Gmail SMTP)
+  // Side Drawer Management (Settings & Logs)
   // ============================================================
-  function openDrawer() {
+  function switchDrawerTab(targetTab) {
+    if (targetTab === 'settings') {
+      if (tabBtnSettings) tabBtnSettings.classList.add('active');
+      if (tabBtnLogs) tabBtnLogs.classList.remove('active');
+      if (drawerPaneSettings) drawerPaneSettings.classList.remove('hidden');
+      if (drawerPaneLogs) drawerPaneLogs.classList.add('hidden');
+    } else {
+      if (tabBtnSettings) tabBtnSettings.classList.remove('active');
+      if (tabBtnLogs) tabBtnLogs.classList.add('active');
+      if (drawerPaneSettings) drawerPaneSettings.classList.add('hidden');
+      if (drawerPaneLogs) drawerPaneLogs.classList.remove('hidden');
+    }
+  }
+
+  if (tabBtnSettings) {
+    tabBtnSettings.addEventListener('click', () => switchDrawerTab('settings'));
+  }
+  if (tabBtnLogs) {
+    tabBtnLogs.addEventListener('click', () => switchDrawerTab('logs'));
+  }
+
+  function openDrawer(tab = 'settings') {
+    switchDrawerTab(tab);
     drawerOverlay.classList.remove('hidden');
     settingsDrawer.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
@@ -127,11 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = '';
   }
 
-  openSettingsBtn.addEventListener('click', openDrawer);
+  openSettingsBtn.addEventListener('click', () => openDrawer('settings'));
+  if (openLogsBtn) {
+    openLogsBtn.addEventListener('click', () => openDrawer('logs'));
+  }
   closeDrawerBtn.addEventListener('click', closeDrawer);
   drawerOverlay.addEventListener('click', closeDrawer);
   if (bannerOpenSettings) {
-    bannerOpenSettings.addEventListener('click', openDrawer);
+    bannerOpenSettings.addEventListener('click', () => openDrawer('settings'));
   }
 
   // Escape key to close drawer
@@ -247,16 +283,30 @@ document.addEventListener('DOMContentLoaded', () => {
   function refreshSmtpStatus() {
     const user = localStorage.getItem(STORAGE.USER);
     const pass = localStorage.getItem(STORAGE.PASS);
+    const badge = document.getElementById('header-smtp-badge');
 
     if (user && pass) {
-      headerSmtpDot.className = 'status-dot status-dot--ready';
-      headerSmtpText.textContent = `Configured (${user})`;
+      headerSmtpDot.className = 'dot dot--ready';
+      headerSmtpText.textContent = user;
+      if (badge) {
+        badge.className = 'header-status-pill header-status-pill--ready';
+        badge.title = `Gmail Connected: ${user} (Click to change)`;
+      }
       if (smtpWarningBanner) smtpWarningBanner.classList.add('hidden');
     } else {
-      headerSmtpDot.className = 'status-dot status-dot--warn';
-      headerSmtpText.textContent = 'SMTP Not Configured';
+      headerSmtpDot.className = 'dot dot--warn';
+      headerSmtpText.textContent = 'Setup Gmail';
+      if (badge) {
+        badge.className = 'header-status-pill header-status-pill--warn';
+        badge.title = 'Click to configure Gmail credentials';
+      }
       if (smtpWarningBanner) smtpWarningBanner.classList.remove('hidden');
     }
+  }
+
+  const headerSmtpBadge = document.getElementById('header-smtp-badge');
+  if (headerSmtpBadge) {
+    headerSmtpBadge.addEventListener('click', openDrawer);
   }
 
   saveSmtpBtn.addEventListener('click', () => saveSmtp(true));
@@ -330,14 +380,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ============================================================
-  // Dynamic Review Links
+  // Dynamic Review Links (Smart & Compact)
   // ============================================================
-  function getOrdinal(n) {
-    const s = ["th", "st", "nd", "rd"];
-    const v = n % 100;
-    return n + (s[(v - 20) % 10] || s[v] || s[0]);
-  }
-
   function renderReviewLinks() {
     reviewLinksWrapper.innerHTML = '';
 
@@ -345,25 +389,29 @@ document.addEventListener('DOMContentLoaded', () => {
       const card = document.createElement('div');
       card.className = 'link-row-card';
 
-      const ordinal = getOrdinal(index + 1);
-
       card.innerHTML = `
-        <div class="link-tag-index">${ordinal}</div>
-        <input 
-          type="url" 
-          class="native-input review-link-input" 
-          data-index="${index}" 
-          placeholder="https://www.google.com/maps/reviews/..." 
-          value="${escapeHtml(linkValue)}"
-        >
+        <div class="link-tag-index">#${index + 1}</div>
+        <div class="link-field-inner">
+          <svg class="link-field-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <input 
+            type="url" 
+            class="review-link-input" 
+            data-index="${index}" 
+            placeholder="https://www.google.com/maps/reviews/..." 
+            value="${escapeHtml(linkValue)}"
+          >
+        </div>
         <button 
           type="button" 
           class="del-link-btn" 
           data-index="${index}" 
-          title="Remove link"
+          title="Remove this review link"
           ${reviewLinks.length <= 1 ? 'disabled style="opacity: 0.2; cursor: not-allowed;"' : ''}
         >
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
           </svg>
@@ -376,15 +424,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const count = reviewLinks.length;
     const text = count === 1 ? '1 link' : `${count} links`;
     linksChip.textContent = text;
-    if (previewTabCount) previewTabCount.textContent = text;
+    if (previewTabCount) previewTabCount.textContent = count;
 
-    // Listeners
+    // Listeners for input and smart multi-link paste
     const inputs = reviewLinksWrapper.querySelectorAll('.review-link-input');
     inputs.forEach(input => {
       input.addEventListener('input', (e) => {
         const idx = parseInt(e.target.dataset.index, 10);
         reviewLinks[idx] = e.target.value;
         updateLivePreview();
+      });
+
+      // Smart Paste: splits multiple lines into separate link inputs!
+      input.addEventListener('paste', (e) => {
+        const pasteData = (e.clipboardData || window.clipboardData)?.getData('text');
+        if (pasteData && (pasteData.includes('\n') || pasteData.includes('\r'))) {
+          e.preventDefault();
+          const splitUrls = pasteData
+            .split(/\r?\n/)
+            .map(s => s.trim())
+            .filter(s => s.length > 0);
+
+          if (splitUrls.length > 1) {
+            const idx = parseInt(e.target.dataset.index, 10);
+            reviewLinks.splice(idx, 1, ...splitUrls);
+            renderReviewLinks();
+            updateLivePreview();
+            showToast(`Added ${splitUrls.length} review links automatically!`, 'info');
+          } else if (splitUrls.length === 1) {
+            e.target.value = splitUrls[0];
+            reviewLinks[parseInt(e.target.dataset.index, 10)] = splitUrls[0];
+            updateLivePreview();
+          }
+        }
       });
     });
 
@@ -622,37 +694,51 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderHistory(history) {
-    if (!history || history.length === 0) {
-      historyContainer.innerHTML = '<p class="empty-history-text">No outreach emails sent yet in this session.</p>';
-      return;
-    }
+    const list = history || [];
+    const count = list.length;
+    if (headerLogCount) headerLogCount.textContent = count;
+    if (drawerLogCount) drawerLogCount.textContent = count;
 
-    historyContainer.innerHTML = '';
-    history.forEach(item => {
-      const isSuccess = item.status !== 'failed';
-      const row = document.createElement('div');
-      row.className = 'history-card-row';
-      row.innerHTML = `
-        <div>
-          <div class="history-card-to">${escapeHtml(item.to)}</div>
-          <div class="history-card-sub">
-            Team: ${escapeHtml(item.teamName)} &bull; ${item.linksCount} link(s) &bull; ${escapeHtml(item.timestamp)}
-            ${item.error ? `<div style="color: var(--brand-red); font-size: 0.72rem; margin-top: 3px; font-weight: 500;">${escapeHtml(item.error)}</div>` : ''}
+    const generateHtml = () => {
+      if (list.length === 0) {
+        return '<p class="empty-history-text">No outreach emails sent yet in this session.</p>';
+      }
+      return list.map(item => {
+        const isSuccess = item.status !== 'failed';
+        return `
+          <div class="history-card-row">
+            <div>
+              <div class="history-card-to">${escapeHtml(item.to)}</div>
+              <div class="history-card-sub">
+                Team: ${escapeHtml(item.teamName)} &bull; ${item.linksCount} link(s) &bull; ${escapeHtml(item.timestamp)}
+                ${item.error ? `<div style="color: var(--brand-red); font-size: 0.72rem; margin-top: 3px; font-weight: 500;">${escapeHtml(item.error)}</div>` : ''}
+              </div>
+            </div>
+            <span class="${isSuccess ? 'sent-tag' : 'failed-tag'}">
+              ${isSuccess ? '✓ Sent' : '✕ Failed'}
+            </span>
           </div>
-        </div>
-        <span class="${isSuccess ? 'sent-tag' : 'failed-tag'}">
-          ${isSuccess ? '✓ Sent' : '✕ Failed'}
-        </span>
-      `;
-      historyContainer.appendChild(row);
-    });
+        `;
+      }).join('');
+    };
+
+    const htmlContent = generateHtml();
+    if (historyContainer) historyContainer.innerHTML = htmlContent;
+    if (drawerHistoryContainer) drawerHistoryContainer.innerHTML = htmlContent;
   }
 
-  clearHistoryBtn.addEventListener('click', () => {
+  function clearLogs() {
     sessionStorage.removeItem(SESSION_LOGS_KEY);
     loadHistory();
     showToast('Session logs cleared.', 'info');
-  });
+  }
+
+  if (clearHistoryBtn) {
+    clearHistoryBtn.addEventListener('click', clearLogs);
+  }
+  if (clearDrawerHistoryBtn) {
+    clearDrawerHistoryBtn.addEventListener('click', clearLogs);
+  }
 
   // ============================================================
   // Initialize
