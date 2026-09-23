@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const bannerOpenSettings = document.getElementById('banner-open-settings');
   const smtpWarningBanner = document.getElementById('smtp-warning-banner');
 
-  const tabButtons = document.querySelectorAll('.tab-btn');
+  const tabButtons = document.querySelectorAll('.tab-item, .tab-btn');
   const tabPanes = document.querySelectorAll('.tab-pane');
   const previewSwitchBtn = document.getElementById('preview-switch-btn');
   const previewTabCount = document.getElementById('preview-tab-count');
