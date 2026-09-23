@@ -352,19 +352,24 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // Mobile Tab Navigation
+  // Mobile Quick Navigation & Smooth Scroll
   // ============================================================
   function switchTab(targetTab) {
     tabButtons.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.tab === targetTab);
     });
 
-    tabPanes.forEach(pane => {
-      pane.classList.toggle('active', pane.id === `section-${targetTab}`);
-    });
+    const targetSection = document.getElementById(`section-${targetTab}`);
+    if (targetSection) {
+      const headerOffset = 110;
+      const elementPosition = targetSection.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
-    // Scroll to top smoothly
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   }
 
   tabButtons.forEach(btn => {
@@ -378,6 +383,24 @@ document.addEventListener('DOMContentLoaded', () => {
       switchTab('preview');
     });
   }
+
+  // Auto-highlight mobile tabs on scroll
+  window.addEventListener('scroll', () => {
+    if (window.innerWidth > 900) return;
+    const scrollPos = window.pageYOffset + 140;
+
+    tabPanes.forEach(pane => {
+      const top = pane.offsetTop;
+      const height = pane.offsetHeight;
+      const tabName = pane.id.replace('section-', '');
+
+      if (scrollPos >= top && scrollPos < top + height) {
+        tabButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.tab === tabName);
+        });
+      }
+    });
+  }, { passive: true });
 
   // ============================================================
   // Dynamic Review Links (Smart & Compact)

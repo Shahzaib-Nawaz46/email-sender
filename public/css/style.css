@@ -64,7 +64,9 @@ body {
 @media (max-width: 900px) {
   body {
     height: auto;
+    min-height: 100vh;
     overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
@@ -135,7 +137,9 @@ body {
 
 @media (max-width: 680px) {
   .brand-badge-tag {
-    display: none;
+    font-size: 0.6rem;
+    padding: 1.5px 6px;
+    display: inline-block !important;
   }
 }
 
@@ -253,10 +257,89 @@ body {
   border: 1px solid var(--brand-blue-border);
 }
 
-/* Mobile Tabs */
+@media (max-width: 768px) {
+  .header-content {
+    height: auto;
+    min-height: 52px;
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand {
+    gap: 8px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .brand-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .brand-name {
+    font-size: 0.88rem;
+  }
+
+  .header-status-pill {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+    max-width: 140px;
+  }
+
+  .header-status-pill .status-label {
+    max-width: 90px;
+  }
+
+  .header-right {
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .btn-logs-pill,
+  .btn-settings-pill {
+    padding: 5px 10px;
+    font-size: 0.72rem;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 440px) {
+  .header-content {
+    padding: 6px 10px;
+  }
+
+  .brand-name {
+    font-size: 0.8rem;
+  }
+
+  .header-status-pill {
+    max-width: 110px;
+    padding: 2.5px 6px;
+    font-size: 0.67rem;
+  }
+
+  .header-status-pill .status-label {
+    max-width: 65px;
+  }
+
+  .btn-logs-pill,
+  .btn-settings-pill {
+    padding: 4px 7px;
+    font-size: 0.69rem;
+  }
+}
+
+/* Mobile Quick Navigation Sticky Bar */
 .mobile-tabs-bar {
   display: none;
-  padding: 0 14px 10px 14px;
+  padding: 8px 14px 10px 14px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
 }
 
 @media (max-width: 900px) {
@@ -488,11 +571,76 @@ body {
 }
 
 @media (max-width: 900px) {
-  .tab-pane {
-    display: none;
+  .app-main-viewport {
+    padding: 12px 14px 50px 14px;
+    height: auto !important;
+    min-height: auto !important;
+    overflow-y: visible !important;
+    flex: none !important;
   }
-  .tab-pane.active {
-    display: block;
+
+  .viewport-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    height: auto !important;
+  }
+
+  .tab-pane {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  .panel-card {
+    height: auto !important;
+    min-height: auto !important;
+  }
+
+  .composer-box {
+    padding: 18px 14px !important;
+  }
+
+  .preview-box {
+    padding: 18px 14px !important;
+  }
+
+  .history-box {
+    padding: 18px 14px !important;
+  }
+
+  .email-sheet {
+    padding: 16px 14px !important;
+    overflow-y: visible !important;
+    height: auto !important;
+  }
+
+  .links-scroll-box {
+    max-height: 300px;
+  }
+
+  #section-history {
+    display: flex !important;
+  }
+
+  .btn-preview-switch {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border-light);
+    color: var(--brand-blue);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .btn-preview-switch:hover {
+    background: var(--brand-blue-light);
+    border-color: var(--brand-blue-border);
   }
 }
 
