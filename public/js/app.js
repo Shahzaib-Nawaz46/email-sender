@@ -790,6 +790,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Sample Lead Quick-Fill for instant testing
+  const sampleFillBtn = document.getElementById('sample-fill-btn');
+  if (sampleFillBtn) {
+    sampleFillBtn.addEventListener('click', () => {
+      recipientEmailInput.value = 'manager@grandvistahotel.com';
+      teamNameInput.value = 'Grand Vista Team';
+      reviewLinks = [
+        'https://maps.google.com/?cid=10928374921098234',
+        'https://maps.app.goo.gl/sampleNegReview889'
+      ];
+      renderReviewLinks();
+      updateLivePreview();
+      showToast('Loaded sample lead for Grand Vista Hotel!', 'success');
+    });
+  }
+
   // Device simulation toggle (Desktop / Mobile Preview)
   if (deviceBtnDesktop && deviceBtnMobile && emailPreviewFrame) {
     deviceBtnDesktop.addEventListener('click', () => {

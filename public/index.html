@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Reputation Outreach - Email Dispatcher</title>
+  <title>Reputation Outreach Studio - Google Review Removal Dispatcher</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -169,13 +169,18 @@
 
           <form id="email-form" class="composer-form-inner">
 
-            <!-- Row 1: Recipient Email & Team Name (Side-by-side to save space) -->
+            <!-- Row 1: Recipient Email & Team Name -->
             <div class="form-row-2">
               <div class="field-item">
-                <label for="recipient-email" class="field-label">
-                  Recipient Email <span class="req">*</span>
-                </label>
-                <input type="email" id="recipient-email" class="compact-input" placeholder="e.g. info@business.com" required autocomplete="email">
+                <div class="label-split">
+                  <label for="recipient-email" class="field-label">
+                    Recipient Email <span class="req">*</span>
+                  </label>
+                  <button type="button" id="sample-fill-btn" class="sample-btn-pill" title="Fill sample business lead for quick testing">
+                    ✨ Sample Lead
+                  </button>
+                </div>
+                <input type="email" id="recipient-email" class="compact-input" placeholder="e.g. contact@luxuryhotel.com" required autocomplete="email">
               </div>
 
               <div class="field-item">
@@ -183,7 +188,7 @@
                   <label for="team-name" class="field-label">Team / Business Name</label>
                   <span class="badge-opt">Optional</span>
                 </div>
-                <input type="text" id="team-name" class="compact-input" placeholder="e.g. Holmes Mill Team">
+                <input type="text" id="team-name" class="compact-input" placeholder="e.g. Grand Vista Team">
               </div>
             </div>
 
@@ -240,7 +245,8 @@
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                   </svg>
                 </span>
-                <span id="send-btn-text">Send Email Now</span>
+                <span id="send-btn-text">Dispatch Email</span>
+                <kbd class="send-kbd-pill">Ctrl ↵</kbd>
               </button>
 
               <button type="button" id="preview-switch-btn" class="btn-preview-switch" title="Preview Recipient Email">
@@ -270,10 +276,15 @@
         <div class="panel-card preview-box">
           <div class="preview-mini-top">
             <div class="preview-tag-group">
+              <div class="mac-window-dots">
+                <span class="mac-dot mac-dot--red"></span>
+                <span class="mac-dot mac-dot--yellow"></span>
+                <span class="mac-dot mac-dot--green"></span>
+              </div>
               <span class="preview-live-tag">
                 <span class="pulse-dot"></span> LIVE PREVIEW
               </span>
-              <span class="preview-client-hint">Recipient View</span>
+              <span class="preview-client-hint">Recipient Inbox</span>
             </div>
 
             <!-- Viewport Device Switcher & Quick Copy (Desktop) -->
