@@ -6,7 +6,7 @@
   <title>Reputation Outreach - Email Dispatcher</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,28 +14,26 @@
   <!-- Toast Container -->
   <div id="toast-container" class="toast-container"></div>
 
-  <!-- Top Navigation Bar -->
-  <header class="main-header">
-    <div class="header-inner">
-      <div class="brand-group">
-        <div class="brand-icon-box">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+  <!-- Sleek Top Header (Compact ~48px) -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
             <polyline points="22,6 12,13 2,6"></polyline>
           </svg>
         </div>
-        <div>
-          <h1 class="brand-heading">Outreach Dispatcher</h1>
-          <div class="brand-meta">
-            <span id="header-smtp-dot" class="status-dot status-dot--warn"></span>
-            <span id="header-smtp-text" class="status-text">SMTP Not Configured</span>
-          </div>
+        <span class="brand-name">Outreach Dispatcher</span>
+        <div class="status-indicator">
+          <span id="header-smtp-dot" class="dot dot--warn"></span>
+          <span id="header-smtp-text" class="status-label">SMTP Not Configured</span>
         </div>
       </div>
 
-      <div class="header-action-group">
-        <button id="open-settings-btn" class="settings-pill-btn" aria-label="Open Settings">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <div class="header-right">
+        <button id="open-settings-btn" class="btn-settings-pill">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="3"></circle>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
           </svg>
@@ -44,330 +42,239 @@
       </div>
     </div>
 
-    <!-- Mobile Segmented Tabs (Shown only on small screens) -->
-    <div class="mobile-segmented-wrap">
-      <div class="segmented-bar">
-        <button id="tab-compose" class="tab-item active" data-tab="compose">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 20h9"></path>
-            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-          </svg>
-          Compose
-        </button>
+    <!-- Mobile Segmented Tabs (hidden on desktop) -->
+    <div class="mobile-tabs-bar">
+      <div class="segmented-control">
+        <button id="tab-compose" class="tab-item active" data-tab="compose">Compose</button>
         <button id="tab-preview" class="tab-item" data-tab="preview">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-          Preview
-          <span class="tab-counter" id="preview-tab-count">1 link</span>
+          Preview <span class="tab-mini-chip" id="preview-tab-count">1</span>
         </button>
-        <button id="tab-history" class="tab-item" data-tab="history">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          Sent Log
-        </button>
+        <button id="tab-history" class="tab-item" data-tab="history">Sent Log</button>
       </div>
     </div>
   </header>
 
-  <!-- Slide-Out Settings Drawer -->
+  <!-- Side-Drawer (Settings) -->
   <div id="drawer-overlay" class="drawer-overlay hidden"></div>
   <aside id="settings-drawer" class="drawer-panel hidden">
-    <div class="drawer-top">
-      <div class="drawer-top-title">
-        <div class="drawer-badge-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-            <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-            <line x1="6" y1="6" x2="6.01" y2="6"></line>
-            <line x1="6" y1="18" x2="6.01" y2="18"></line>
-          </svg>
-        </div>
-        <div>
-          <h2 class="drawer-heading">Configuration</h2>
-          <p class="drawer-caption">Stored locally in your browser</p>
-        </div>
+    <div class="drawer-header">
+      <div>
+        <h2 class="drawer-title">Settings</h2>
+        <p class="drawer-desc">Gmail SMTP &amp; Defaults (Saved locally)</p>
       </div>
-      <button id="close-drawer-btn" class="drawer-close-circle" aria-label="Close settings">&times;</button>
+      <button id="close-drawer-btn" class="drawer-close" aria-label="Close settings">&times;</button>
     </div>
 
-    <div class="drawer-body">
-      <div class="privacy-note">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-        <span>Your credentials never leave your browser. They are used purely to communicate directly with Gmail SMTP.</span>
+    <div class="drawer-content">
+      <div class="field-item">
+        <label for="smtp-email" class="field-label">Sender Gmail Address <span class="req">*</span></label>
+        <input type="email" id="smtp-email" class="compact-input" placeholder="yourcompany@gmail.com" autocomplete="email">
       </div>
 
-      <!-- Section: SMTP Credentials -->
-      <div class="drawer-section-label">GMAIL CREDENTIALS</div>
-
-      <div class="input-group">
-        <label for="smtp-email" class="input-label">Sender Gmail Address <span class="required">*</span></label>
-        <input type="email" id="smtp-email" class="app-input" placeholder="yourcompany@gmail.com" autocomplete="email">
-      </div>
-
-      <div class="input-group">
-        <div class="label-row">
-          <label for="smtp-pass" class="input-label">Google App Password (16 chars) <span class="required">*</span></label>
-          <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" class="help-link">Generate code &nearr;</a>
+      <div class="field-item">
+        <div class="label-split">
+          <label for="smtp-pass" class="field-label">Google App Password (16 chars) <span class="req">*</span></label>
+          <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" class="link-small">Generate &nearr;</a>
         </div>
-        <div class="input-with-action">
-          <input type="password" id="smtp-pass" class="app-input" placeholder="xxxx xxxx xxxx xxxx" autocomplete="current-password">
-          <button type="button" id="toggle-pass-visibility" class="action-inside-btn" title="Toggle password visibility">
-            <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="input-inline-btn">
+          <input type="password" id="smtp-pass" class="compact-input" placeholder="xxxx xxxx xxxx xxxx" autocomplete="current-password">
+          <button type="button" id="toggle-pass-visibility" class="btn-inside-icon" title="Toggle password visibility">
+            <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
               <circle cx="12" cy="12" r="3"></circle>
             </svg>
           </button>
         </div>
-        <span class="input-hint">Requires 2-Step Verification enabled in Google Account.</span>
+        <span class="field-tip">Requires 2-Step Verification in Google Account.</span>
       </div>
 
-      <!-- Section: Default Content -->
-      <div class="drawer-section-label" style="margin-top: 10px;">DEFAULT MESSAGE SETTINGS</div>
+      <div class="field-divider"></div>
 
-      <div class="input-group">
-        <label for="email-subject" class="input-label">Default Subject Line</label>
-        <input type="text" id="email-subject" class="app-input" value="Removal of negative reviews on your Google profile">
+      <div class="field-item">
+        <label for="email-subject" class="field-label">Default Subject Line</label>
+        <input type="text" id="email-subject" class="compact-input" value="Removal of negative reviews on your Google profile">
       </div>
 
-      <div class="input-group">
-        <label for="signoff-name" class="input-label">Signature Team Name</label>
-        <input type="text" id="signoff-name" class="app-input" value="Reputation Support Team">
-        <span class="input-hint">Appears at bottom as "Best regards, [Name]".</span>
+      <div class="field-item">
+        <label for="signoff-name" class="field-label">Signature Team Name</label>
+        <input type="text" id="signoff-name" class="compact-input" value="Reputation Support Team">
         <input type="hidden" id="smtp-sender-name" value="Reputation Support Team">
       </div>
 
-      <div class="drawer-footer-actions">
-        <button type="button" id="save-smtp-btn" class="btn btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-          Save Settings in LocalStorage
-        </button>
-        <button type="button" id="test-smtp-btn" class="btn btn-secondary">
+      <div class="drawer-actions">
+        <button type="button" id="save-smtp-btn" class="btn btn--blue">Save Settings</button>
+        <button type="button" id="test-smtp-btn" class="btn btn--outline">
           <span class="btn-spinner hidden" id="test-spinner"></span>
-          <svg id="test-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-          </svg>
+          <span id="test-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          </span>
           <span id="test-btn-text">Test SMTP Connection</span>
         </button>
-        <button type="button" id="clear-smtp-btn" class="btn btn-ghost-danger">
-          Clear Saved Settings
-        </button>
+        <button type="button" id="clear-smtp-btn" class="btn-link-danger">Clear Saved Credentials</button>
       </div>
     </div>
   </aside>
 
-  <!-- Main Canvas -->
-  <main class="content-canvas">
-    <div class="canvas-container">
+  <!-- Main Viewport Body (Zero-Scroll on Standard Desktop) -->
+  <main class="app-main-viewport">
+    <div class="viewport-grid">
 
-      <!-- SECTION 1: COMPOSER (Calm, Spacious, Un-cramped) -->
-      <section id="section-compose" class="tab-pane active">
-        <div class="composer-card">
+      <!-- COLUMN 1: COMPACT COMPOSER -->
+      <section id="section-compose" class="tab-pane active composer-col">
+        <div class="panel-card composer-box">
 
           <!-- Notice banner if SMTP not set -->
-          <div id="smtp-warning-banner" class="alert-banner">
-            <div class="alert-banner-left">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="8" x2="12" y2="12"></line>
-                <line x1="12" y1="16" x2="12.01" y2="16"></line>
-              </svg>
-              <span><strong>Gmail Setup Needed:</strong> Configure your 16-character App Password to start sending.</span>
-            </div>
-            <button type="button" id="banner-open-settings" class="alert-action-btn">Open Settings</button>
+          <div id="smtp-warning-banner" class="compact-banner">
+            <span><strong>SMTP Not Set:</strong> Open Settings to save your Gmail App Password.</span>
+            <button type="button" id="banner-open-settings" class="banner-link-btn">Set Up &nearr;</button>
           </div>
 
-          <div class="composer-header">
-            <div>
-              <h2 class="composer-title">New Outreach Message</h2>
-              <p class="composer-subtitle">Fill in recipient details and the Google review links to remove</p>
-            </div>
-          </div>
+          <form id="email-form" class="composer-form-inner">
 
-          <form id="email-form">
-            <!-- Step 1: Recipient Details -->
-            <div class="form-section">
-              <div class="section-title-row">
-                <span class="step-num">1</span>
-                <div>
-                  <h3 class="section-heading">Recipient Details</h3>
-                  <p class="section-desc">Who are you reaching out to?</p>
-                </div>
+            <!-- Row 1: Recipient Email & Team Name (Side-by-side to save space) -->
+            <div class="form-row-2">
+              <div class="field-item">
+                <label for="recipient-email" class="field-label">
+                  Recipient Email <span class="req">*</span>
+                </label>
+                <input type="email" id="recipient-email" class="compact-input" placeholder="e.g. info@business.com" required autocomplete="email">
               </div>
 
-              <div class="form-grid-2">
-                <div class="input-group">
-                  <label for="recipient-email" class="input-label">
-                    Recipient Email Address <span class="required">*</span>
-                  </label>
-                  <input type="email" id="recipient-email" class="app-input" placeholder="e.g. info@holmesmill.co.uk" required autocomplete="email">
+              <div class="field-item">
+                <div class="label-split">
+                  <label for="team-name" class="field-label">Team / Business Name</label>
+                  <span class="badge-opt">Optional</span>
                 </div>
-
-                <div class="input-group">
-                  <div class="label-row">
-                    <label for="team-name" class="input-label">Team / Business Name</label>
-                    <span class="badge-optional">Optional</span>
-                  </div>
-                  <input type="text" id="team-name" class="app-input" placeholder="e.g. Holmes Mill Team">
-                </div>
-              </div>
-
-              <!-- Live Greeting Indicator -->
-              <div class="greeting-preview-pill">
-                <span class="pill-beacon"></span>
-                <span id="greeting-pill-text">Greeting will be: <strong>Hello,</strong></span>
+                <input type="text" id="team-name" class="compact-input" placeholder="e.g. Holmes Mill Team">
               </div>
             </div>
 
-            <!-- Step 2: Negative Review Links -->
-            <div class="form-section" style="margin-top: 32px;">
-              <div class="section-title-row">
-                <span class="step-num">2</span>
-                <div style="flex: 1;">
-                  <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <h3 class="section-heading">Negative Review Links</h3>
-                    <span class="count-pill" id="links-chip">1 link</span>
-                  </div>
-                  <p class="section-desc">Add each negative review link to be removed</p>
-                </div>
-              </div>
-
-              <div id="review-links-wrapper" class="links-stack">
-                <!-- Dynamically generated clean input rows -->
-              </div>
-
-              <button type="button" id="add-link-btn" class="add-link-button">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
-                <span>Add Another Review Link</span>
-              </button>
+            <!-- Compact Greeting Preview Line -->
+            <div class="greeting-micro-bar">
+              <span class="micro-dot"></span>
+              <span id="greeting-pill-text">Greeting: <strong>Hello,</strong></span>
             </div>
 
-            <!-- Step 3: Action Dock -->
-            <div class="action-footer">
-              <button type="submit" id="send-btn" class="btn btn-send">
+            <!-- Row 2: Review Links Section with Inline Header -->
+            <div class="links-section">
+              <div class="links-header-row">
+                <div class="links-header-left">
+                  <span class="section-title-sm">Google Review Links</span>
+                  <span class="chip-sm" id="links-chip">1 link</span>
+                </div>
+                <button type="button" id="add-link-btn" class="btn-add-inline">
+                  + Add Link
+                </button>
+              </div>
+
+              <!-- Scrollable Link Stack (Compact) -->
+              <div id="review-links-wrapper" class="links-scroll-box">
+                <!-- Dynamically generated items -->
+              </div>
+            </div>
+
+            <!-- Row 3: Always Visible Send Footer -->
+            <div class="composer-footer">
+              <button type="submit" id="send-btn" class="btn-send-main">
                 <span class="btn-spinner hidden" id="send-spinner"></span>
-                <svg id="send-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
+                <span id="send-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                </span>
                 <span id="send-btn-text">Send Email Now</span>
               </button>
 
-              <button type="button" id="preview-switch-btn" class="btn btn-preview-toggle">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-                <span>View Live Preview</span>
+              <button type="button" id="preview-switch-btn" class="btn-preview-switch">
+                Preview
               </button>
             </div>
+
           </form>
         </div>
       </section>
 
-      <!-- SECTION 2: LIVE PREVIEW (Spacious, Elegant Real-Email Document) -->
-      <section id="section-preview" class="tab-pane">
-        <div class="preview-panel-wrap">
-          <div class="preview-top-meta">
-            <div class="preview-badge-live">
-              <span class="pulse-beacon"></span>
-              <span>LIVE EMAIL PREVIEW</span>
-            </div>
-            <span class="preview-sub-hint">Exactly as delivered to recipient</span>
+      <!-- COLUMN 2: SLEEK LIVE PREVIEW (Fits naturally on screen) -->
+      <section id="section-preview" class="tab-pane preview-col">
+        <div class="panel-card preview-box">
+          <div class="preview-mini-top">
+            <span class="preview-live-tag">
+              <span class="pulse-dot"></span> LIVE PREVIEW
+            </span>
+            <span class="preview-client-hint">Recipient View</span>
           </div>
 
-          <!-- Pristine White Email Document -->
-          <div class="email-document">
-            
-            <!-- Email Header Meta -->
-            <div class="email-meta-header">
-              <div class="sender-avatar-circle">
-                <span>R</span>
-              </div>
-              <div class="sender-text-info">
-                <div class="sender-row-main">
-                  <span id="preview-sender-name" class="sender-display-name">Reputation Support Team</span>
-                  <span class="email-delivery-time">1:47 PM</span>
+          <!-- Email Content Sheet -->
+          <div class="email-sheet">
+            <!-- Header Meta -->
+            <div class="sheet-meta">
+              <div class="sheet-avatar">R</div>
+              <div class="sheet-info">
+                <div class="sheet-info-line1">
+                  <span id="preview-sender-name" class="sheet-sender">Reputation Support Team</span>
+                  <span class="sheet-time">1:47 PM</span>
                 </div>
-                <div class="recipient-row-sub">
+                <div class="sheet-info-line2">
                   <span>to <strong id="preview-to-name">info</strong></span>
-                  <span class="sub-arrow">&rsaquo;</span>
+                  <span class="sheet-arrow">&rsaquo;</span>
                 </div>
               </div>
             </div>
 
-            <!-- Subject Line -->
-            <div class="email-subject-box">
-              <h2 id="preview-subject-text" class="email-subject-text">
+            <!-- Subject -->
+            <div class="sheet-subject">
+              <h3 id="preview-subject-text" class="sheet-subject-title">
                 Removal of negative reviews on your Google profile
-              </h2>
+              </h3>
             </div>
 
-            <hr class="email-divider">
+            <hr class="sheet-divider">
 
             <!-- Body Message -->
-            <div class="email-reading-body">
-              <p id="preview-greeting" class="lead-greeting">
+            <div class="sheet-body">
+              <p id="preview-greeting" class="msg-greeting">
                 Hello <strong id="preview-team-name">Holmes Mill Team</strong>,
               </p>
 
-              <p class="body-p">
+              <p class="msg-p">
                 We noticed some negative reviews on your Google profile. We can completely remove them for you &mdash; and <strong>you only pay AFTER successful removal</strong> (zero upfront payment).
               </p>
 
-              <p class="review-links-header">
-                Review link(s):
-              </p>
+              <p class="msg-links-head">Review link(s):</p>
 
-              <ol id="preview-links-list" class="email-numbered-links">
+              <ol id="preview-links-list" class="msg-ol">
                 <li><a href="https://www.google.com/maps/reviews/..." target="_blank" rel="noopener noreferrer">https://www.google.com/maps/reviews/...</a></li>
               </ol>
 
-              <p class="body-p">
+              <p class="msg-p">
                 If you'd like us to take care of this for you, simply reply to this email and let us know.
               </p>
 
-              <div class="email-signoff-block">
-                <p class="signoff-regards">Best regards,</p>
-                <p id="preview-signoff-name" class="signoff-team-bold">Reputation Support Team</p>
+              <div class="msg-signoff">
+                <p class="signoff-reg">Best regards,</p>
+                <p id="preview-signoff-name" class="signoff-name">Reputation Support Team</p>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      <!-- SECTION 3: SESSION HISTORY LOG -->
-      <section id="section-history" class="tab-pane">
-        <div class="composer-card">
-          <div class="composer-header">
-            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-              <div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <h2 class="composer-title">Session Activity Log</h2>
-                  <span class="session-badge">Current Session Only</span>
-                </div>
-                <p class="composer-subtitle">Real-time status of emails sent in this browser session</p>
-              </div>
-              <button id="clear-history-btn" class="btn-clear-text">Clear Session Logs</button>
+      <!-- COLUMN 3: SESSION HISTORY (Tabbed or overlay) -->
+      <section id="section-history" class="tab-pane history-col">
+        <div class="panel-card history-box">
+          <div class="history-top">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="section-title-sm">Session Activity</span>
+              <span class="chip-sm">Temporary</span>
             </div>
+            <button id="clear-history-btn" class="btn-link-subtle">Clear</button>
           </div>
-
-          <div id="history-container" class="history-list-wrap">
-            <p class="empty-history-text">No outreach emails sent yet in this session.</p>
+          <div id="history-container" class="history-scroll-box">
+            <p class="empty-text">No outreach emails sent yet in this session.</p>
           </div>
         </div>
       </section>
