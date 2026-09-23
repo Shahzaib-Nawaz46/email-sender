@@ -575,9 +575,44 @@ body {
   }
 }
 
+@media (min-width: 900px) and (max-height: 800px) {
+  .app-main-viewport {
+    padding: 8px 14px !important;
+  }
+
+  .composer-box,
+  .preview-box {
+    padding: 12px 14px !important;
+  }
+
+  .links-scroll-box {
+    max-height: calc(100vh - 380px) !important;
+  }
+
+  .compact-input {
+    height: 34px !important;
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .btn-send-main {
+    height: 38px !important;
+    font-size: 0.84rem !important;
+  }
+
+  .field-item {
+    gap: 3px !important;
+  }
+
+  .greeting-pill {
+    padding: 4px 8px !important;
+    font-size: 0.69rem !important;
+  }
+}
+
 @media (max-width: 900px) {
   .app-main-viewport {
-    padding: 10px 12px 30px 12px;
+    padding: 10px 12px calc(36px + env(safe-area-inset-bottom, 20px)) 12px;
     height: auto !important;
     min-height: auto !important;
     overflow-y: visible !important;
@@ -622,18 +657,45 @@ body {
     max-height: 260px;
   }
 
+  /* Mobile Composer Footer: Full width Send Button */
+  .composer-footer {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding-top: 14px !important;
+    width: 100% !important;
+  }
+
+  .btn-send-main {
+    width: 100% !important;
+    height: 46px !important;
+    font-size: 0.94rem !important;
+    font-weight: 700 !important;
+    flex: none !important;
+  }
+
+  .composer-footer-sub {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
   .btn-preview-switch {
     display: inline-flex !important;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     background: var(--bg-subtle);
     border: 1px solid var(--border-light);
     color: var(--brand-blue);
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 600;
-    padding: 8px 14px;
+    padding: 0 14px;
     border-radius: var(--radius-sm);
     cursor: pointer;
+    flex: 1 !important;
+    height: 40px !important;
   }
 
   .btn-preview-switch:hover {
@@ -641,14 +703,21 @@ body {
     border-color: var(--brand-blue-border);
   }
 
+  .btn-icon-secondary {
+    width: 44px !important;
+    height: 40px !important;
+    flex-shrink: 0 !important;
+  }
+
   .preview-mobile-footer {
     display: flex !important;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    margin-top: 14px;
-    padding-top: 12px;
+    margin-top: 16px;
+    padding-top: 14px;
     border-top: 1px solid var(--border-light);
+    width: 100%;
   }
 
   .preview-toolbar .device-switcher {
@@ -672,7 +741,9 @@ body {
    COMPACT COMPOSER (Zero-Scroll Form)
    ============================================================ */
 .composer-box {
-  padding: 20px 22px;
+  padding: 18px 20px;
+  overflow-y: auto;
+  scrollbar-width: thin;
 }
 
 .compact-banner {
@@ -1070,11 +1141,24 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
+  background: var(--bg-card);
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  flex-shrink: 0;
+}
+
+.composer-footer-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-send-main {
   flex: 1;
-  display: flex;
+  min-width: 0;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -1090,6 +1174,7 @@ body {
   box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
   transition: all 0.15s ease;
   height: 42px;
+  white-space: nowrap;
 }
 
 .btn-send-main:hover:not(:disabled) {
@@ -1107,7 +1192,7 @@ body {
   background: var(--bg-subtle);
   border: 1px solid var(--border-light);
   color: var(--text-head);
-  padding: 10px 16px;
+  padding: 0 16px;
   border-radius: var(--radius-sm);
   font-size: 0.82rem;
   font-weight: 600;
@@ -1115,12 +1200,42 @@ body {
   height: 42px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
   transition: all 0.15s ease;
+  white-space: nowrap;
 }
 
 .btn-preview-switch:hover {
   background: #e2e8f0;
+}
+
+.btn-preview-back {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--text-head);
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-preview-back:hover {
+  background: #e2e8f0;
+  color: var(--text-head);
+}
+
+.btn-send-mobile {
+  height: 44px !important;
+  flex: 1 !important;
 }
 
 .btn-icon-secondary {
