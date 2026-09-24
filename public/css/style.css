@@ -1739,3 +1739,263 @@ body {
 .toast--info {
   background: #2563eb;
 }
+
+/* ============================================================
+   Email Template Format Selection (Simple vs Standard)
+   ============================================================ */
+
+/* Settings Drawer Format Cards */
+.format-choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.format-choice-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--bg-subtle);
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.format-choice-card:hover {
+  background: #ffffff;
+  border-color: var(--brand-blue-border);
+}
+
+.format-choice-card:has(input[type="radio"]:checked),
+.format-choice-card.active {
+  background: #eff6ff;
+  border-color: var(--brand-blue);
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.12);
+}
+
+.format-choice-card input[type="radio"] {
+  margin-top: 3px;
+  accent-color: var(--brand-blue);
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.format-choice-info {
+  flex: 1;
+}
+
+.format-choice-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.format-choice-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-head);
+}
+
+.badge-recommended {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  background: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.format-choice-desc {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Composer Quick Format Switcher */
+.composer-format-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  margin-bottom: 2px;
+}
+
+.format-bar-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.format-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.format-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1px solid transparent;
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.format-pill-btn:hover {
+  background: #ffffff;
+  color: var(--text-head);
+  border-color: var(--border-light);
+}
+
+.format-pill-btn.active {
+  background: #ffffff;
+  color: var(--brand-blue);
+  border-color: var(--brand-blue-border);
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.1);
+}
+
+.pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-subtle);
+  transition: all 0.15s ease;
+}
+
+.format-pill-btn.active .pill-dot {
+  background: var(--brand-blue);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.pill-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: var(--radius-full);
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* Preview Header Format Pill */
+.preview-format-pill {
+  font-size: 0.66rem;
+  font-weight: 700;
+  color: var(--brand-blue);
+  background: #eff6ff;
+  border: 1px solid var(--brand-blue-border);
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+}
+
+/* ============================================================
+   Simple Format: 100% Borderless & Exact Screenshot Look
+   ============================================================ */
+.email-sheet.mode-simple,
+.email-sheet-frame.mode-simple .email-sheet {
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: #ffffff !important;
+  padding: 16px 14px !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Move subject above sender meta in Simple mode (like Gmail mobile screenshot) */
+.email-sheet.mode-simple .sheet-subject,
+.email-sheet-frame.mode-simple .sheet-subject {
+  order: 1 !important;
+  margin: 0 0 14px 0 !important;
+  border: none !important;
+}
+
+.email-sheet.mode-simple .sheet-subject-title,
+.email-sheet-frame.mode-simple .sheet-subject-title {
+  font-size: 1.15rem !important;
+  font-weight: 500 !important;
+  color: #1f1f1f !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.email-sheet.mode-simple .sheet-meta,
+.email-sheet-frame.mode-simple .sheet-meta {
+  order: 2 !important;
+  margin-bottom: 20px !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.email-sheet.mode-simple .sheet-avatar,
+.email-sheet-frame.mode-simple .sheet-avatar {
+  background: #5f6368 !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 600 !important;
+}
+
+/* Completely remove the divider line in Simple mode */
+.email-sheet.mode-simple .sheet-divider,
+.email-sheet-frame.mode-simple .sheet-divider {
+  display: none !important;
+}
+
+.email-sheet.mode-simple .sheet-body,
+.email-sheet-frame.mode-simple .sheet-body {
+  order: 3 !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.email-sheet.mode-simple .sheet-body *,
+.email-sheet-frame.mode-simple .sheet-body * {
+  border: none !important;
+}
+
+.email-sheet.mode-simple .msg-ol,
+.email-sheet-frame.mode-simple .msg-ol {
+  border: none !important;
+}
+
+/* Dynamic Greeting Badge */
+.badge-dynamic {
+  font-size: 0.63rem;
+  font-weight: 700;
+  padding: 1.5px 6px;
+  border-radius: var(--radius-full);
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  letter-spacing: 0.01em;
+}
+
+/* Greeting micro-bar live update animation */
+.greeting-micro-bar {
+  transition: background 0.2s ease;
+}
+
+#greeting-pill-text strong {
+  transition: color 0.2s ease;
+}
+
+

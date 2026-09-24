@@ -22,12 +22,70 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
-// Generate email template matching exact user reference
-function generateEmailContent({ teamName, reviewLinks, signOffName }) {
+// Generate email template matching exact user reference (Simple or Standard)
+function generateEmailContent({ teamName, reviewLinks, signOffName, format = 'simple' }) {
   const cleanTeamName = teamName ? teamName.trim() : '';
-  const cleanSignOff = (signOffName && signOffName.trim()) ? signOffName.trim() : 'Reputation Support Team';
+  const cleanSignOff =
+    signOffName && signOffName.trim()
+      ? signOffName.trim()
+      : 'Reputation Support Team';
 
-  // Greeting: "Hello Holmes Mill Team," if provided, else "Hello,"
+  const validLinks = (reviewLinks || []).filter(
+    l => typeof l === 'string' && l.trim().length > 0
+  );
+
+  const textLinks = validLinks
+    .map((l, i) => `${i + 1}. ${l.trim()}`)
+    .join('\n');
+
+  // Format 1: Simple (Dynamic team name handling)
+  if (format === 'simple') {
+    let greetingHtml = 'Hello,';
+    let greetingText = 'Hello,';
+
+    if (cleanTeamName) {
+      const formattedBiz = cleanTeamName.toLowerCase().endsWith('team')
+        ? cleanTeamName
+        : `${cleanTeamName} Team`;
+      greetingHtml = `Hello <strong>${escapeHtml(formattedBiz)}</strong>,`;
+      greetingText = `Hello ${formattedBiz},`;
+    }
+
+    const links_html = validLinks
+      .map(link => `    <li><a href="${escapeHtml(link.trim())}" target="_blank">${escapeHtml(link.trim())}</a></li>`)
+      .join('\n');
+
+    const links_text = validLinks
+      .map((link, idx) => `${idx + 1}. ${link.trim()}`)
+      .join('\n');
+
+    const html = `<!DOCTYPE html>
+<html>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+  <p>${greetingHtml}</p>
+  <p>We have noticed some negative reviews on your profile. We can completely remove them for you. <strong>You only pay AFTER successful removal!</strong></p>
+  <p><strong>Review links:</strong></p>
+  <ol>
+${links_html}
+  </ol>
+  <p>Best regards,<br><strong>${escapeHtml(cleanSignOff)}</strong></p>
+</body>
+</html>`;
+
+    const text = `${greetingText}
+
+We have noticed some negative reviews on your profile. We can completely remove them for you. You only pay AFTER successful removal!
+
+Review links:
+${links_text}
+
+Best regards,
+${cleanSignOff}`;
+
+    return { html, text };
+  }
+
+  // Format 2: Standard (Current format)
   const htmlGreeting = cleanTeamName
     ? `Hello <strong>${escapeHtml(cleanTeamName)}</strong>,`
     : `Hello,`;
@@ -36,56 +94,107 @@ function generateEmailContent({ teamName, reviewLinks, signOffName }) {
     ? `Hello ${cleanTeamName},`
     : `Hello,`;
 
-  const validLinks = (reviewLinks || []).filter(l => typeof l === 'string' && l.trim().length > 0);
-
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Reviews Notice</title>
+
+  <style>
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      background: #ffffff !important;
+    }
+
+    body, p, div, li, a, strong {
+      font-family: Arial, Helvetica, sans-serif !important;
+      color: #000000 !important;
+    }
+
+    a {
+      color: #000000 !important;
+      text-decoration: underline !important;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .email-content {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 20px !important;
+      }
+    }
+  </style>
 </head>
-<body style="margin: 0; padding: 24px 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f6f8fa; color: #202124;">
-  <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
-    <tr>
-      <td align="center">
-        <table role="presentation" style="max-width: 580px; width: 100%; background: #ffffff; border-radius: 8px; border: 1px solid #e1e4e8; padding: 32px 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); text-align: left;" border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td>
-              <p style="font-size: 16px; margin: 0 0 20px 0; color: #202124; line-height: 1.5;">
-                ${htmlGreeting}
-              </p>
 
-              <p style="font-size: 15px; line-height: 1.65; margin: 0 0 20px 0; color: #3c4043;">
-                We noticed some negative reviews on your Google profile. We can completely remove them for you &mdash; and <strong>you only pay AFTER successful removal</strong> (zero upfront payment).
-              </p>
+<body style="margin:0; padding:0; background:#ffffff; color:#000000;">
 
-              <p style="font-size: 15px; font-weight: 700; margin: 0 0 10px 0; color: #202124;">
-                Review link(s):
-              </p>
+  <div
+    class="email-content"
+    style="
+      width:100%;
+      max-width:700px;
+      box-sizing:border-box;
+      padding:30px 25px;
+      margin:0;
+      background:#ffffff;
+      color:#000000;
+    "
+  >
 
-              <ol style="margin: 0 0 22px 24px; padding: 0; line-height: 1.65;">
-                ${validLinks.map(link => `<li style="margin-bottom: 8px; font-size: 14px; word-break: break-all;"><a href="${escapeHtml(link.trim())}" target="_blank" rel="noopener noreferrer" style="color: #1a73e8; text-decoration: underline;">${escapeHtml(link.trim())}</a></li>`).join('\n                ')}
-              </ol>
+    <p style="font-size:16px; line-height:1.6; margin:0 0 20px 0;">
+      ${htmlGreeting}
+    </p>
 
-              <p style="font-size: 15px; line-height: 1.65; margin: 0 0 26px 0; color: #3c4043;">
-                If you'd like us to take care of this for you, simply reply to this email and let us know.
-              </p>
+    <p style="font-size:15px; line-height:1.7; margin:0 0 20px 0;">
+      We noticed some negative reviews on your Google profile. We can completely
+      remove them for you — and
+      <strong>you only pay AFTER successful removal</strong>
+      (zero upfront payment).
+    </p>
 
-              <div style="margin-top: 26px; font-size: 14px; color: #5f6368; line-height: 1.5;">
-                Best regards,<br>
-                <strong style="font-size: 15px; font-weight: 700; color: #202124; display: inline-block; margin-top: 4px;">${escapeHtml(cleanSignOff)}</strong>
-              </div>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
+    <p style="font-size:15px; font-weight:bold; margin:0 0 10px 0;">
+      Review link(s):
+    </p>
+
+    <ol
+      style="
+        margin:0 0 22px 22px;
+        padding:0;
+        font-size:14px;
+        line-height:1.7;
+      "
+    >
+      ${validLinks.map(link => `
+        <li style="margin-bottom:8px; word-break:break-all;">
+          <a
+            href="${escapeHtml(link.trim())}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            ${escapeHtml(link.trim())}
+          </a>
+        </li>
+      `).join('')}
+    </ol>
+
+    <p style="font-size:15px; line-height:1.7; margin:0 0 25px 0;">
+      If you'd like us to take care of this for you, simply reply to this email
+      and let us know.
+    </p>
+
+    <div style="font-size:14px; line-height:1.6;">
+      Best regards,<br>
+      <strong>${escapeHtml(cleanSignOff)}</strong>
+    </div>
+
+  </div>
+
 </body>
 </html>`;
 
-  const textLinks = validLinks.map((l, i) => `${i + 1}. ${l.trim()}`).join('\n');
   const text = `${textGreeting}
 
 We noticed some negative reviews on your Google profile. We can completely remove them for you — and you only pay AFTER successful removal (zero upfront payment).
@@ -183,14 +292,21 @@ app.post('/api/send-email', async (req, res) => {
       ? smtp.senderName.trim()
       : (emailData.signOffName || 'Reputation Support Team');
 
+    const chosenFormat = emailData.format === 'standard' ? 'standard' : 'simple';
+
+    const defaultSubject = chosenFormat === 'simple'
+      ? 'Regarding negative reviews on your Google profile'
+      : 'Removal of negative reviews on your Google profile';
+
     const subject = (emailData.subject && emailData.subject.trim())
       ? emailData.subject.trim()
-      : 'Removal of negative reviews on your Google profile';
+      : defaultSubject;
 
     const { html, text } = generateEmailContent({
       teamName: emailData.teamName,
       reviewLinks: reviewLinks,
-      signOffName: senderDisplayName
+      signOffName: senderDisplayName,
+      format: chosenFormat
     });
 
     const mailOptions = {

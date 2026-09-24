@@ -78,8 +78,32 @@ document.addEventListener('DOMContentLoaded', () => {
   const copyEmailTextBtn = document.getElementById('copy-email-text-btn');
   const previewBackBtn = document.getElementById('preview-back-btn');
   const previewSendMobileBtn = document.getElementById('preview-send-mobile-btn');
+  const previewSheetBody = document.getElementById('preview-sheet-body');
+  const previewFormatTag = document.getElementById('preview-format-tag');
+
+  // Format Switcher Elements
+  const pillFormatSimple = document.getElementById('pill-format-simple');
+  const pillFormatStandard = document.getElementById('pill-format-standard');
+  const settingFormatSimple = document.getElementById('setting-format-simple');
+  const settingFormatStandard = document.getElementById('setting-format-standard');
+
+  const FORMATS = {
+    simple: {
+      id: 'simple',
+      name: 'Simple (Screenshot)',
+      defaultSubject: 'Regarding negative reviews on your Google profile',
+      defaultSignoff: 'Shahzaib'
+    },
+    standard: {
+      id: 'standard',
+      name: 'Standard',
+      defaultSubject: 'Removal of negative reviews on your Google profile',
+      defaultSignoff: 'Reputation Support Team'
+    }
+  };
 
   // State
+  let currentFormat = 'simple';
   let reviewLinks = [''];
   const STORAGE = {
     USER: 'reputation_sender_smtp_user',
@@ -87,7 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
     NAME: 'reputation_sender_smtp_name',
     SUBJECT: 'reputation_sender_subject',
     SIGNOFF: 'reputation_sender_signoff',
-    HISTORY: 'reputation_sender_history'
+    HISTORY: 'reputation_sender_history',
+    FORMAT: 'reputation_sender_format'
   };
 
   // ============================================================
@@ -208,14 +233,77 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
+  // Format Selection Logic (Simple vs Standard)
+  // ============================================================
+  function setFormat(newFormat, autoUpdateSubject = false) {
+    currentFormat = newFormat === 'standard' ? 'standard' : 'simple';
+
+    // Update Composer Quick Pills
+    if (pillFormatSimple) pillFormatSimple.classList.toggle('active', currentFormat === 'simple');
+    if (pillFormatStandard) pillFormatStandard.classList.toggle('active', currentFormat === 'standard');
+
+    // Update Settings Drawer Radio Cards
+    if (settingFormatSimple) settingFormatSimple.checked = (currentFormat === 'simple');
+    if (settingFormatStandard) settingFormatStandard.checked = (currentFormat === 'standard');
+
+    // Update Radio Card wrapper active styles
+    const cardSimple = settingFormatSimple?.closest('.format-choice-card');
+    const cardStandard = settingFormatStandard?.closest('.format-choice-card');
+    if (cardSimple) cardSimple.classList.toggle('active', currentFormat === 'simple');
+    if (cardStandard) cardStandard.classList.toggle('active', currentFormat === 'standard');
+
+    // Update Preview Header Tag
+    if (previewFormatTag) {
+      previewFormatTag.textContent = currentFormat === 'simple' ? 'Simple Format' : 'Standard Format';
+    }
+
+    // Toggle borderless mode on email sheet
+    const emailSheet = document.querySelector('.email-sheet');
+    if (emailSheet) {
+      emailSheet.classList.toggle('mode-simple', currentFormat === 'simple');
+    }
+    if (emailPreviewFrame) {
+      emailPreviewFrame.classList.toggle('mode-simple', currentFormat === 'simple');
+    }
+
+    // Auto-update default subject line if not custom edited
+    if (autoUpdateSubject) {
+      const curSubj = emailSubjectInput.value.trim();
+      if (!curSubj || curSubj === FORMATS.simple.defaultSubject || curSubj === FORMATS.standard.defaultSubject) {
+        emailSubjectInput.value = FORMATS[currentFormat].defaultSubject;
+        localStorage.setItem(STORAGE.SUBJECT, emailSubjectInput.value);
+      }
+    }
+
+    localStorage.setItem(STORAGE.FORMAT, currentFormat);
+    updateLivePreview();
+  }
+
+  if (pillFormatSimple) {
+    pillFormatSimple.addEventListener('click', () => setFormat('simple', true));
+  }
+  if (pillFormatStandard) {
+    pillFormatStandard.addEventListener('click', () => setFormat('standard', true));
+  }
+  if (settingFormatSimple) {
+    settingFormatSimple.addEventListener('change', () => setFormat('simple', true));
+  }
+  if (settingFormatStandard) {
+    settingFormatStandard.addEventListener('change', () => setFormat('standard', true));
+  }
+
+  // ============================================================
   // LocalStorage Persistence
   // ============================================================
   function loadSmtp() {
     const user = localStorage.getItem(STORAGE.USER) || '';
     const pass = localStorage.getItem(STORAGE.PASS) || '';
-    const name = localStorage.getItem(STORAGE.NAME) || 'Reputation Support Team';
+    const name = localStorage.getItem(STORAGE.NAME) || 'Shahzaib';
     const savedSubject = localStorage.getItem(STORAGE.SUBJECT);
     const savedSignoff = localStorage.getItem(STORAGE.SIGNOFF);
+    const savedFormat = localStorage.getItem(STORAGE.FORMAT) || 'simple';
+
+    setFormat(savedFormat, false);
 
     if (user) smtpEmailInput.value = user;
     if (pass) smtpPassInput.value = pass;
@@ -223,11 +311,11 @@ document.addEventListener('DOMContentLoaded', () => {
       smtpSenderNameInput.value = name;
     }
 
-    // Load saved subject if exists
+    // Load saved subject if exists, else format default
     if (savedSubject !== null && savedSubject !== undefined) {
       emailSubjectInput.value = savedSubject;
     } else {
-      emailSubjectInput.value = 'Removal of negative reviews on your Google profile';
+      emailSubjectInput.value = FORMATS[currentFormat].defaultSubject;
     }
 
     // Load saved signature name if exists
@@ -236,7 +324,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (name) {
       signoffNameInput.value = name;
     } else {
-      signoffNameInput.value = 'Reputation Support Team';
+      signoffNameInput.value = 'Shahzaib';
     }
 
     refreshSmtpStatus();
@@ -246,7 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function saveSmtp(showNotification = true) {
     const user = smtpEmailInput.value.trim();
     const pass = smtpPassInput.value.trim();
-    const name = signoffNameInput.value.trim() || (smtpSenderNameInput ? smtpSenderNameInput.value.trim() : '') || 'Reputation Support Team';
+    const name = signoffNameInput.value.trim() || (smtpSenderNameInput ? smtpSenderNameInput.value.trim() : '') || 'Shahzaib';
 
     if (!user || !pass) {
       showToast('Please provide both Gmail and App Password.', 'error');
@@ -258,6 +346,7 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE.NAME, name);
     localStorage.setItem(STORAGE.SIGNOFF, name);
     localStorage.setItem(STORAGE.SUBJECT, emailSubjectInput.value.trim());
+    localStorage.setItem(STORAGE.FORMAT, currentFormat);
 
     if (smtpSenderNameInput) smtpSenderNameInput.value = name;
 
@@ -272,17 +361,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function clearSmtp() {
-    if (confirm('Clear saved Gmail settings, subject, and signature from this browser?')) {
+    if (confirm('Clear saved Gmail settings, format, subject, and signature from this browser?')) {
       localStorage.removeItem(STORAGE.USER);
       localStorage.removeItem(STORAGE.PASS);
       localStorage.removeItem(STORAGE.NAME);
       localStorage.removeItem(STORAGE.SUBJECT);
       localStorage.removeItem(STORAGE.SIGNOFF);
+      localStorage.removeItem(STORAGE.FORMAT);
       smtpEmailInput.value = '';
       smtpPassInput.value = '';
-      smtpSenderNameInput.value = 'Reputation Support Team';
-      signoffNameInput.value = 'Reputation Support Team';
-      emailSubjectInput.value = 'Removal of negative reviews on your Google profile';
+      smtpSenderNameInput.value = 'Shahzaib';
+      signoffNameInput.value = 'Shahzaib';
+      setFormat('simple', false);
+      emailSubjectInput.value = FORMATS.simple.defaultSubject;
       refreshSmtpStatus();
       updateLivePreview();
       showToast('Saved settings cleared.', 'info');
@@ -514,17 +605,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ============================================================
-  // Live Email Preview (Faithful Screenshot Replica)
+  // Live Email Preview (Faithful Screenshot Replica or Standard)
   // ============================================================
   function updateLivePreview() {
     // Subject
-    const subject = emailSubjectInput.value.trim() || 'Removal of negative reviews on your Google profile';
+    const defaultSubject = FORMATS[currentFormat].defaultSubject;
+    const subject = emailSubjectInput.value.trim() || defaultSubject;
     previewSubjectText.textContent = subject;
 
     // Sender Name
-    const sender = (signoffNameInput.value.trim() || smtpSenderNameInput.value.trim() || 'Reputation Support Team');
+    const sender = (signoffNameInput.value.trim() || smtpSenderNameInput.value.trim() || 'Shahzaib');
     previewSenderName.textContent = sender;
-    previewSignoffName.textContent = sender;
 
     // Recipient 'to'
     const recipient = recipientEmailInput.value.trim();
@@ -532,38 +623,88 @@ document.addEventListener('DOMContentLoaded', () => {
       const username = recipient.split('@')[0];
       previewToName.textContent = username || 'recipient';
     } else {
-      previewToName.textContent = 'info';
+      previewToName.textContent = 'contact';
     }
 
-    // Team Name Greeting logic:
-    // If entered: Hello <strong>Holmes Mill Team</strong>,
-    // If empty: Hello,
-    const teamName = teamNameInput.value.trim();
-    if (teamName) {
-      previewGreeting.innerHTML = `Hello <strong id="preview-team-name">${escapeHtml(teamName)}</strong>,`;
-      greetingPillText.innerHTML = `Greeting will be: <strong>Hello ${escapeHtml(teamName)},</strong>`;
-    } else {
-      previewGreeting.innerHTML = `Hello,`;
-      greetingPillText.innerHTML = `Greeting will be: <strong>Hello,</strong>`;
-    }
+    const cleanTeamName = teamNameInput.value.trim();
 
-    // Review Links list
+    // Active review links
     const activeLinks = reviewLinks
       .map(l => l.trim())
       .filter(l => l.length > 0);
 
-    previewLinksList.innerHTML = '';
-    if (activeLinks.length > 0) {
-      activeLinks.forEach(link => {
-        const li = document.createElement('li');
-        li.innerHTML = `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link)}</a>`;
-        previewLinksList.appendChild(li);
-      });
+    const linksToDisplay = activeLinks.length > 0
+      ? activeLinks
+      : ['https://www.google.com/maps/reviews/data=!4m8!14m7!1m6!2m5!1sCi9DQUIRGUNvZENodHljRjlvT25oVk1qSk9hbXhOU1RoUVFGZlJvUGxldzE...'];
+
+    const linksHtml = linksToDisplay.map(link => `
+      <li style="margin-bottom:8px; word-break:break-all;">
+        <a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(link)}</a>
+      </li>
+    `).join('');
+
+    // Dynamic Render Based on currentFormat
+    if (currentFormat === 'simple') {
+      let greetingHtml = 'Hello,';
+      let greetingPill = 'Greeting: <strong>Hello,</strong>';
+
+      if (cleanTeamName) {
+        const formattedBiz = cleanTeamName.toLowerCase().endsWith('team')
+          ? cleanTeamName
+          : `${cleanTeamName} Team`;
+        greetingHtml = `Hello <strong>${escapeHtml(formattedBiz)}</strong>,`;
+        greetingPill = `Greeting: <strong>Hello ${escapeHtml(formattedBiz)},</strong>`;
+      }
+
+      greetingPillText.innerHTML = greetingPill;
+
+      if (previewSheetBody) {
+        previewSheetBody.innerHTML = `
+          <p>${greetingHtml}</p>
+          <p>We have noticed some negative reviews on your profile. We can completely remove them for you. <strong>You only pay AFTER successful removal!</strong></p>
+          <p><strong>Review links:</strong></p>
+          <ol style="margin-left: 20px; padding-left: 0;">
+            ${linksHtml}
+          </ol>
+          <p>Best regards,<br><strong>${escapeHtml(sender)}</strong></p>
+        `;
+      }
     } else {
-      // Authentic placeholder matching screenshot
-      const li = document.createElement('li');
-      li.innerHTML = `<a href="https://www.google.com/maps/reviews/..." target="_blank" rel="noopener noreferrer">https://www.google.com/maps/reviews/...</a>`;
-      previewLinksList.appendChild(li);
+      // Standard Format
+      const greetingHtml = cleanTeamName
+        ? `Hello <strong>${escapeHtml(cleanTeamName)}</strong>,`
+        : `Hello,`;
+
+      greetingPillText.innerHTML = `Greeting: <strong>${cleanTeamName ? `Hello ${escapeHtml(cleanTeamName)},` : 'Hello,'}</strong>`;
+
+      if (previewSheetBody) {
+        previewSheetBody.innerHTML = `
+          <p class="msg-greeting" style="margin:0 0 16px 0; font-size:16px; line-height:1.6; color:#000000;">
+            ${cleanTeamName ? `Hello <strong>${escapeHtml(cleanTeamName)}</strong>,` : 'Hello,'}
+          </p>
+
+          <p class="msg-p" style="margin:0 0 18px 0; font-size:15px; line-height:1.7; color:#000000;">
+            We noticed some negative reviews on your Google profile. We can completely remove them for you &mdash; and <strong>you only pay AFTER successful removal</strong> (zero upfront payment).
+          </p>
+
+          <p class="msg-links-head" style="margin:0 0 8px 0; font-size:15px; font-weight:700; color:#000000;">
+            Review link(s):
+          </p>
+
+          <ol class="msg-ol" style="margin:0 0 20px 22px; padding:0; font-size:14px; line-height:1.7; color:#000000;">
+            ${linksHtml}
+          </ol>
+
+          <p class="msg-p" style="margin:0 0 20px 0; font-size:15px; line-height:1.7; color:#000000;">
+            If you'd like us to take care of this for you, simply reply to this email and let us know.
+          </p>
+
+          <div class="msg-signoff" style="font-size:14px; line-height:1.6; color:#000000;">
+            <p class="signoff-reg" style="margin:0 0 2px 0;">Best regards,</p>
+            <p class="signoff-name" style="margin:0; font-weight:700; color:#000000;">${escapeHtml(sender)}</p>
+          </div>
+        `;
+      }
     }
   }
 
@@ -632,9 +773,10 @@ document.addEventListener('DOMContentLoaded', () => {
       emailData: {
         to: toEmail,
         teamName: teamNameInput.value.trim(),
-        subject: emailSubjectInput.value.trim() || 'Removal of negative reviews on your Google profile',
+        subject: emailSubjectInput.value.trim() || FORMATS[currentFormat].defaultSubject,
         reviewLinks: validLinks,
-        signOffName: signoffNameInput.value.trim() || senderName
+        signOffName: signoffNameInput.value.trim() || senderName,
+        format: currentFormat
       }
     };
 
@@ -805,20 +947,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Copy plain text email
+  // Copy plain text email (matching current selected format)
   if (copyEmailTextBtn) {
     copyEmailTextBtn.addEventListener('click', () => {
-      const subject = emailSubjectInput.value.trim() || 'Removal of negative reviews on your Google profile';
-      const teamName = teamNameInput.value.trim();
-      const greeting = teamName ? `Hello ${teamName},` : 'Hello,';
-      const sender = signoffNameInput.value.trim() || 'Reputation Support Team';
+      const defaultSubject = FORMATS[currentFormat].defaultSubject;
+      const subject = emailSubjectInput.value.trim() || defaultSubject;
+      const cleanTeam = teamNameInput.value.trim();
+      const sender = signoffNameInput.value.trim() || 'Shahzaib';
       const validLinks = reviewLinks.filter(l => l && l.trim().length > 0);
-      const linksList = validLinks.map((l, i) => `${i + 1}. ${l.trim()}`).join('\n');
+      const linksList = validLinks.length > 0
+        ? validLinks.map((l, i) => `${i + 1}. ${l.trim()}`).join('\n')
+        : '1. https://www.google.com/maps/reviews/...';
 
-      const plainText = `Subject: ${subject}\n\n${greeting}\n\nWe noticed some negative reviews on your Google profile. We can completely remove them for you — and you only pay AFTER successful removal (zero upfront payment).\n\nReview link(s):\n${linksList || '(No links specified)'}\n\nIf you'd like us to take care of this for you, simply reply to this email and let us know.\n\nBest regards,\n${sender}`;
+      let plainText = '';
+
+      if (currentFormat === 'simple') {
+        let greetingText = 'Hello,';
+        if (cleanTeam) {
+          const formattedBiz = cleanTeam.toLowerCase().endsWith('team')
+            ? cleanTeam
+            : `${cleanTeam} Team`;
+          greetingText = `Hello ${formattedBiz},`;
+        }
+
+        plainText = `${greetingText}\n\nWe have noticed some negative reviews on your profile. We can completely remove them for you. You only pay AFTER successful removal!\n\nReview links:\n${linksList}\n\nBest regards,\n${sender}`;
+      } else {
+        const greeting = cleanTeam ? `Hello ${cleanTeam},` : 'Hello,';
+        plainText = `Subject: ${subject}\n\n${greeting}\n\nWe noticed some negative reviews on your Google profile. We can completely remove them for you — and you only pay AFTER successful removal (zero upfront payment).\n\nReview link(s):\n${linksList}\n\nIf you'd like us to take care of this for you, simply reply to this email and let us know.\n\nBest regards,\n${sender}`;
+      }
 
       navigator.clipboard.writeText(plainText).then(() => {
-        showToast('Email text copied to clipboard!', 'success');
+        showToast(`Email (${FORMATS[currentFormat].name}) copied to clipboard!`, 'success');
       }).catch(() => {
         showToast('Could not copy to clipboard.', 'error');
       });
